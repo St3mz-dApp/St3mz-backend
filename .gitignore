@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+yarn-debug.log*
+yarn-error.log*
+.vscode
+*.code-workspace
+*.cache
+.notes
