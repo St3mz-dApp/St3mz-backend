@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { userRouter } from "./router/user.router";
 import { testRouter } from "./router/test.router";
 import { errorHandler } from "./error/error-handler";
+import { listenToEvents } from "./service/eventListener.service";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,9 @@ if (process.env.NODE_ENV === "development") {
 
 // Error handling
 app.use(errorHandler);
+
+// Start listening to contract events
+listenToEvents();
 
 // Server activation
 app.listen(port, () => {
