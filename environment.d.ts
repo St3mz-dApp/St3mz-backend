@@ -10,6 +10,10 @@ declare global {
       CONTRACT_ADDRESS_LOCAL: string;
       CONTRACT_ADDRESS_TESTNET: string;
       CONTRACT_ADDRESS_MAINNET: string;
+      DB_HOST: string;
+      DB_NAME: string;
+      DB_USER: string;
+      DB_PASSWORD: string;
     }
   }
 }

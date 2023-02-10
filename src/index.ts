@@ -1,16 +1,25 @@
 import express from "express";
 import logger from "morgan";
-import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import { userRouter } from "./router/user.router";
 import { testRouter } from "./router/test.router";
 import { errorHandler } from "./error/error-handler";
 import { listenToEvents } from "./service/eventListener.service";
+import { sequelize } from "./db/sequelize.db";
+import { Config } from "./config";
+import { Nft } from "./db/nft";
+import { Account } from "./db/account";
+import { License } from "./db/license";
+import { NftOwner } from "./db/nftOwner";
 
-dotenv.config();
+export const accountRepository = sequelize.getRepository(Account);
+export const nftRepository = sequelize.getRepository(Nft);
+export const nftOwnerRepository = sequelize.getRepository(NftOwner);
+export const licenseRepository = sequelize.getRepository(License);
+export const stemRepository = sequelize.getRepository(NftOwner);
+
 const app = express();
-const port = process.env.PORT;
 
 // Logger
 app.use(logger("dev"));
@@ -39,6 +48,7 @@ app.use(errorHandler);
 listenToEvents();
 
 // Server activation
-app.listen(port, () => {
-  console.log(`⚡️Listening on port ${port}`);
+app.listen(Config.port, async () => {
+  await sequelize.sync({ force: Config.dropTables });
+  console.log(`⚡️Listening on port ${Config.port}`);
 });

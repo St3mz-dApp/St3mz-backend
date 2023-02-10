@@ -1,18 +1,14 @@
 import { ethers } from "ethers";
 import { EventFilter } from "ethers/types/providers";
+import { Config } from "../config";
 import { st3mzAbi } from "../resources/st3mzAbi";
 
-export const listenToEvents = (): void => {
-  const network = process.env.NETWORK || "mainnet";
-  const rpcUrl = process.env[`RPC_URL_${network.toUpperCase()}`];
-  const contractAddress =
-    process.env[`CONTRACT_ADDRESS_${network.toUpperCase()}`];
-  const provider = new ethers.JsonRpcProvider(rpcUrl);
-
+export const listenToEvents = async (): Promise<void> => {
+  const provider = new ethers.JsonRpcProvider(Config.rpcUrl);
   const iSt3mz = new ethers.Interface(st3mzAbi);
 
   const mintFilter: EventFilter = {
-    address: contractAddress,
+    address: Config.contractAddress,
     topics: [ethers.id("Mint(address,uint256,string,uint256,uint256)")],
   };
   provider.on(mintFilter, (log) => {
@@ -23,9 +19,8 @@ export const listenToEvents = (): void => {
     console.log(decodedLog.supply);
     console.log(decodedLog.price);
   });
-
   const buyFilter: EventFilter = {
-    address: contractAddress,
+    address: Config.contractAddress,
     topics: [ethers.id("Buy(address,uint256,uint256)")],
   };
   provider.on(buyFilter, (log) => {
