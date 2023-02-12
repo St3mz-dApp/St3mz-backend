@@ -12,6 +12,7 @@ import { Account } from "./db/account";
 import { License } from "./db/license";
 import { NftOwner } from "./db/nftOwner";
 import { Stem } from "./db/stem";
+import { nftRouter } from "./router/nft.router";
 
 export const accountRepository = sequelize.getRepository(Account);
 export const nftRepository = sequelize.getRepository(Nft);
@@ -36,10 +37,10 @@ app.use(helmet());
 app.get("/", (_req, res) => {
   res.send("✅ Server is up!");
 });
-// app.use("/user", userRouter);
-// if (process.env.NODE_ENV === "development") {
-//   app.use("/test", testRouter);
-// }
+app.use("/nft", nftRouter);
+if (process.env.NODE_ENV === "development") {
+  app.use("/test", testRouter);
+}
 
 // Error handling
 app.use(errorHandler);
