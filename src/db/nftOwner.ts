@@ -17,4 +17,7 @@ export class NftOwner extends Model {
   @ForeignKey(() => Account)
   @Column(DataType.STRING)
   ownerAddress!: string;
+
+  @Column(DataType.INTEGER)
+  amount!: number;
 }

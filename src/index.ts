@@ -2,7 +2,6 @@ import express from "express";
 import logger from "morgan";
 import cors from "cors";
 import helmet from "helmet";
-import { userRouter } from "./router/user.router";
 import { testRouter } from "./router/test.router";
 import { errorHandler } from "./error/error-handler";
 import { listenToEvents } from "./service/eventListener.service";
@@ -12,12 +11,13 @@ import { Nft } from "./db/nft";
 import { Account } from "./db/account";
 import { License } from "./db/license";
 import { NftOwner } from "./db/nftOwner";
+import { Stem } from "./db/stem";
 
 export const accountRepository = sequelize.getRepository(Account);
 export const nftRepository = sequelize.getRepository(Nft);
 export const nftOwnerRepository = sequelize.getRepository(NftOwner);
 export const licenseRepository = sequelize.getRepository(License);
-export const stemRepository = sequelize.getRepository(NftOwner);
+export const stemRepository = sequelize.getRepository(Stem);
 
 const app = express();
 
@@ -36,10 +36,10 @@ app.use(helmet());
 app.get("/", (_req, res) => {
   res.send("✅ Server is up!");
 });
-app.use("/user", userRouter);
-if (process.env.NODE_ENV === "development") {
-  app.use("/test", testRouter);
-}
+// app.use("/user", userRouter);
+// if (process.env.NODE_ENV === "development") {
+//   app.use("/test", testRouter);
+// }
 
 // Error handling
 app.use(errorHandler);

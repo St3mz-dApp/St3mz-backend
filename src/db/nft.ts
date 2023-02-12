@@ -51,11 +51,11 @@ export class Nft extends Model {
   @Column(DataType.INTEGER)
   duration!: number;
 
-  @Column(DataType.INTEGER)
-  format!: number;
+  @Column(DataType.STRING)
+  format!: string;
 
-  @Column(DataType.INTEGER)
-  genre!: number;
+  @Column(DataType.STRING)
+  genre!: string;
 
   @Column(DataType.INTEGER)
   bpm!: number;

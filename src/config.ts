@@ -14,6 +14,11 @@ if (rpcUrl === undefined) {
   );
 }
 
+const ipfsGateway = process.env.IPFS_GATEWAY;
+if (ipfsGateway === undefined) {
+  throw new Error("IPFS_GATEWAY environment variable is not set");
+}
+
 const contractAddress =
   process.env[`CONTRACT_ADDRESS_${network.toUpperCase()}`];
 if (contractAddress === undefined) {
@@ -43,6 +48,7 @@ export const Config = {
   network,
   rpcUrl,
   contractAddress,
+  ipfsGateway,
   dbName: process.env.DB_NAME!,
   dbHost: process.env.DB_HOST!,
   dbUser: process.env.DB_USER!,
