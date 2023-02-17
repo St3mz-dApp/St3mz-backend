@@ -8,6 +8,10 @@ declare global {
       RPC_URL_TESTNET: string;
       RPC_URL_MAINNET: string;
       IPFS_GATEWAY: string;
+      AWS_REGION: string;
+      AWS_ACCESS_KEY_ID: string;
+      AWS_SECRET_ACCESS_KEY: string;
+      S3_BUCKET_NAME: string;
       CONTRACT_ADDRESS_LOCAL: string;
       CONTRACT_ADDRESS_TESTNET: string;
       CONTRACT_ADDRESS_MAINNET: string;

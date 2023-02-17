@@ -27,6 +27,22 @@ if (contractAddress === undefined) {
   );
 }
 
+if (process.env.AWS_REGION === undefined) {
+  throw new Error("AWS_REGION environment variable is not set");
+}
+
+if (process.env.AWS_ACCESS_KEY_ID === undefined) {
+  throw new Error("AWS_ACCESS_KEY_ID environment variable is not set");
+}
+
+if (process.env.AWS_SECRET_ACCESS_KEY === undefined) {
+  throw new Error("AWS_SECRET_ACCESS_KEY environment variable is not set");
+}
+
+if (process.env.S3_BUCKET_NAME === undefined) {
+  throw new Error("S3_BUCKET_NAME environment variable is not set");
+}
+
 if (process.env.DB_HOST === undefined) {
   throw new Error("DB_HOST environment variable is not set");
 }
@@ -49,6 +65,10 @@ export const Config = {
   rpcUrl,
   contractAddress,
   ipfsGateway,
+  awsRegion: process.env.AWS_REGION!,
+  awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+  awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  s3Bucket: process.env.S3_BUCKET_NAME!.replace("{network}", network),
   dbName: process.env.DB_NAME!,
   dbHost: process.env.DB_HOST!,
   dbUser: process.env.DB_USER!,

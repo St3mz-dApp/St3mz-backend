@@ -7,6 +7,7 @@ import {
 import { Nft } from "../db/nft";
 import { ErrorCode } from "../error/error-code";
 import { ErrorException } from "../error/error-exception";
+import * as s3Service from "./s3.service";
 
 export const get = async (id: number): Promise<Nft> => {
   const nft = await nftRepository.findByPk(id, {

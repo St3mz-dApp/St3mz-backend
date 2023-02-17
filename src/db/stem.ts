@@ -14,6 +14,9 @@ export class Stem extends Model {
   file!: string;
 
   @Column(DataType.STRING)
+  cachedFile!: string;
+
+  @Column(DataType.STRING)
   description!: string;
 
   @ForeignKey(() => Nft)

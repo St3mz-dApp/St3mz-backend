@@ -11,6 +11,7 @@ import {
 import { Config } from "../config";
 import { st3mzAbi } from "../resources/st3mzAbi";
 import { Metadata } from "../model/metadata";
+import * as s3Service from "./s3.service";
 
 export const listenToEvents = async (): Promise<void> => {
   const provider = new ethers.JsonRpcProvider(Config.rpcUrl);

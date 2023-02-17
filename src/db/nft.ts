@@ -46,7 +46,13 @@ export class Nft extends Model {
   image!: string;
 
   @Column(DataType.STRING)
+  cachedImage!: string;
+
+  @Column(DataType.STRING)
   file!: string;
+
+  @Column(DataType.STRING)
+  cachedFile!: string;
 
   @Column(DataType.INTEGER)
   duration!: number;
