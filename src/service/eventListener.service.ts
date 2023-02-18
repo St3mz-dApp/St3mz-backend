@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { EventFilter } from "ethers/types/providers";
+import { EventFilter, Filter } from "ethers/types/providers";
 import axios from "axios";
 import {
   accountRepository,
@@ -13,9 +13,58 @@ import { st3mzAbi } from "../resources/st3mzAbi";
 import { Metadata } from "../model/metadata";
 import * as s3Service from "./s3.service";
 
+// Block number where the contract was deployed
+const FROM_BLOCK = 13699612;
+
 export const listenToEvents = async (): Promise<void> => {
   const provider = new ethers.JsonRpcProvider(Config.rpcUrl);
   const iSt3mz = new ethers.Interface(st3mzAbi);
+
+  if (Config.dropTables) {
+    // Get mint past events
+    const pastMintFilter: Filter = {
+      fromBlock: FROM_BLOCK,
+      toBlock: "latest",
+      address: Config.contractAddress,
+      topics: [ethers.id("Mint(address,uint256,string,uint256,uint256)")],
+    };
+    const mintLogs = await provider.getLogs(pastMintFilter);
+    for (const mintLog of mintLogs) {
+      const decodedLog = iSt3mz.decodeEventLog(
+        "Mint",
+        mintLog.data,
+        mintLog.topics
+      );
+      await createNft(
+        decodedLog.minter.toLowerCase(),
+        Number(decodedLog.id),
+        decodedLog.uri,
+        Number(decodedLog.supply),
+        decodedLog.price
+      );
+    }
+
+    // Get buy past events
+    const pastBuyFilter: Filter = {
+      fromBlock: FROM_BLOCK,
+      toBlock: "latest",
+      address: Config.contractAddress,
+      topics: [ethers.id("Buy(address,uint256,uint256)")],
+    };
+    const buyLogs = await provider.getLogs(pastBuyFilter);
+    for (const buyLog of buyLogs) {
+      const decodedLog = iSt3mz.decodeEventLog(
+        "Buy",
+        buyLog.data,
+        buyLog.topics
+      );
+      await updateNftOwner(
+        decodedLog.buyer.toLowerCase(),
+        Number(decodedLog.id),
+        decodedLog.amount
+      );
+    }
+  }
 
   const mintFilter: EventFilter = {
     address: Config.contractAddress,
@@ -46,6 +95,7 @@ export const listenToEvents = async (): Promise<void> => {
   });
 };
 
+// Create NFT in DB
 const createNft = async (
   minterAddress: string,
   id: number,
@@ -146,6 +196,7 @@ const createNft = async (
   }
 };
 
+// Update NFT owner and available supply after a purchase in DB
 const updateNftOwner = async (
   ownerAddress: string,
   nftId: number,

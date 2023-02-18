@@ -39,7 +39,7 @@ export class Nft extends Model {
   @Column(DataType.STRING)
   name!: string;
 
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(360))
   description!: string;
 
   @Column(DataType.STRING)

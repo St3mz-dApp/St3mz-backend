@@ -45,11 +45,10 @@ if (process.env.NODE_ENV === "development") {
 // Error handling
 app.use(errorHandler);
 
-// Start listening to contract events
-listenToEvents();
-
 // Server activation
 app.listen(Config.port, async () => {
   await sequelize.sync({ force: Config.dropTables });
+  // Start listening to contract events
+  listenToEvents();
   console.log(`⚡️Listening on port ${Config.port}`);
 });
