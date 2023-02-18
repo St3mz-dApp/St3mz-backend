@@ -59,12 +59,27 @@ const createNft = async (
       defaults: { address: minterAddress },
     });
 
+    await s3Service.createFolder(id.toString());
+
     let metadata = new Metadata();
     try {
-      const { data } = await axios.get(
+      const { data: metadata_ } = await axios.get(
         uri.replace("ipfs://", Config.ipfsGateway)
       );
-      metadata = data;
+      metadata = metadata_;
+
+      if (metadata.file) {
+        const { data: file } = await axios.get(
+          metadata.file.replace("ipfs://", Config.ipfsGateway)
+        );
+        metadata.cachedFile = await s3Service.uploadFile(id.toString(), file);
+      }
+      if (metadata.image) {
+        const { data: image } = await axios.get(
+          metadata.image.replace("ipfs://", Config.ipfsGateway)
+        );
+        metadata.cachedImage = await s3Service.uploadFile(id.toString(), image);
+      }
     } catch (error) {
       console.error(
         `ERROR fetching metadata from IPFS for NFT ${id}: ${uri.replace(
@@ -100,9 +115,14 @@ const createNft = async (
     }
 
     for (const stem of metadata.stems) {
-      stemRepository.create({
+      const { data: stemFile } = await axios.get(
+        stem.file.replace("ipfs://", Config.ipfsGateway)
+      );
+      const cachedFile = await s3Service.uploadFile(id.toString(), stemFile);
+      await stemRepository.create({
         nftId: id,
         file: stem.file,
+        cachedFile: cachedFile,
         description: stem.description,
       });
     }

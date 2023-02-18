@@ -19,6 +19,7 @@ declare global {
       DB_NAME: string;
       DB_USER: string;
       DB_PASSWORD: string;
+      DROP_TABLES: string;
     }
   }
 }

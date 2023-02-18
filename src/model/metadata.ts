@@ -14,7 +14,9 @@ export class Metadata {
   name: string;
   description: string;
   file: string;
+  cachedFile: string;
   image: string;
+  cachedImage: string;
   genre: string;
   bpm: number;
   format: string;
@@ -26,7 +28,9 @@ export class Metadata {
     this.name = "";
     this.description = "";
     this.file = "";
+    this.cachedFile = "";
     this.image = "";
+    this.cachedImage = "";
     this.genre = "";
     this.bpm = 0;
     this.format = "";
