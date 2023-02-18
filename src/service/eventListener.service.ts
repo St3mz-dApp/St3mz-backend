@@ -53,14 +53,12 @@ const createNft = async (
   supply: number,
   price: bigint
 ): Promise<void> => {
+  await accountRepository.findOrCreate({
+    where: { address: minterAddress },
+    defaults: { address: minterAddress },
+  });
+
   try {
-    await accountRepository.findOrCreate({
-      where: { address: minterAddress },
-      defaults: { address: minterAddress },
-    });
-
-    await s3Service.createFolder(id.toString());
-
     let metadata = new Metadata();
     try {
       const { data: metadata_ } = await axios.get(
@@ -70,15 +68,25 @@ const createNft = async (
 
       if (metadata.file) {
         const { data: file } = await axios.get(
-          metadata.file.replace("ipfs://", Config.ipfsGateway)
+          metadata.file.replace("ipfs://", Config.ipfsGateway),
+          { responseType: "arraybuffer" }
         );
-        metadata.cachedFile = await s3Service.uploadFile(id.toString(), file);
+        metadata.cachedFile = await s3Service.uploadFile(
+          id.toString(),
+          metadata.file.split("/").pop() || `track.${metadata.format}`,
+          Buffer.from(file, "binary")
+        );
       }
       if (metadata.image) {
         const { data: image } = await axios.get(
-          metadata.image.replace("ipfs://", Config.ipfsGateway)
+          metadata.image.replace("ipfs://", Config.ipfsGateway),
+          { responseType: "arraybuffer" }
         );
-        metadata.cachedImage = await s3Service.uploadFile(id.toString(), image);
+        metadata.cachedImage = await s3Service.uploadFile(
+          id.toString(),
+          metadata.image.split("/").pop() || `image.png`,
+          Buffer.from(image, "binary")
+        );
       }
     } catch (error) {
       console.error(
@@ -99,7 +107,9 @@ const createNft = async (
       name: metadata.name,
       description: metadata.description,
       image: metadata.image,
+      cachedImage: metadata.cachedImage,
       file: metadata.file,
+      cachedFile: metadata.cachedFile,
       duration: metadata.duration,
       format: metadata.format,
       genre: metadata.genre,
@@ -114,11 +124,16 @@ const createNft = async (
       });
     }
 
-    for (const stem of metadata.stems) {
+    for (const [i, stem] of metadata.stems.entries()) {
       const { data: stemFile } = await axios.get(
-        stem.file.replace("ipfs://", Config.ipfsGateway)
+        stem.file.replace("ipfs://", Config.ipfsGateway),
+        { responseType: "arraybuffer" }
       );
-      const cachedFile = await s3Service.uploadFile(id.toString(), stemFile);
+      const cachedFile = await s3Service.uploadFile(
+        id.toString(),
+        stem.file.split("/").pop() || `stem_${i}.${metadata.format}`,
+        Buffer.from(stemFile, "binary")
+      );
       await stemRepository.create({
         nftId: id,
         file: stem.file,

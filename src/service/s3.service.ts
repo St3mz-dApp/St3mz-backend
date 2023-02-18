@@ -7,39 +7,21 @@ const s3Client = new S3Client({
   credentials: fromEnv(),
 });
 
-export const createFolder = async (folder: string): Promise<boolean> => {
+export const uploadFile = async (
+  folder: string,
+  fileName: string,
+  file: File | Buffer
+): Promise<string> => {
   try {
     await s3Client.send(
       new PutObjectCommand({
         Bucket: Config.s3Bucket,
-        Key: folder,
-      })
-    );
-
-    const fileUrl = `https://${Config.s3Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${folder}`;
-    console.log("Folder url", fileUrl);
-
-    return true;
-  } catch (err: any) {
-    console.log("Error", err);
-    return false;
-  }
-};
-
-export const uploadFile = async (
-  folder: string,
-  file: File
-): Promise<string> => {
-  try {
-    const res = await s3Client.send(
-      new PutObjectCommand({
-        Bucket: Config.s3Bucket,
-        Key: folder + file.name,
+        Key: `${folder}/${fileName}`,
         Body: file,
       })
     );
 
-    const fileUrl = `https://${Config.s3Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${folder}/${file.name}`;
+    const fileUrl = `https://${Config.s3Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${folder}/${fileName}`;
     console.log("File url", fileUrl);
 
     return fileUrl;
