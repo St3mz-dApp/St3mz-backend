@@ -72,4 +72,6 @@ export const Config = {
   dbUser: process.env.DB_USER!,
   dbPassword: process.env.DB_PASSWORD!,
   dropTables: process.env.DROP_TABLES === "true",
+  eventsFromBlock: process.env.EVENTS_FROM_BLOCK || "0",
+  eventsToBlock: process.env.EVENTS_TO_BLOCK || "latest",
 };

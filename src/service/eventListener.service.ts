@@ -13,18 +13,15 @@ import { st3mzAbi } from "../resources/st3mzAbi";
 import { Metadata } from "../model/metadata";
 import * as s3Service from "./s3.service";
 
-// Block number where the contract was deployed
-const FROM_BLOCK = 13699612;
-
 export const listenToEvents = async (): Promise<void> => {
   const provider = new ethers.JsonRpcProvider(Config.rpcUrl);
   const iSt3mz = new ethers.Interface(st3mzAbi);
 
-  if (Config.dropTables) {
+  if (Config.eventsFromBlock === undefined && Config.eventsToBlock !== "") {
     // Get mint past events
     const pastMintFilter: Filter = {
-      fromBlock: FROM_BLOCK,
-      toBlock: "latest",
+      fromBlock: Config.eventsFromBlock,
+      toBlock: Config.eventsToBlock,
       address: Config.contractAddress,
       topics: [ethers.id("Mint(address,uint256,string,uint256,uint256)")],
     };
@@ -46,8 +43,8 @@ export const listenToEvents = async (): Promise<void> => {
 
     // Get buy past events
     const pastBuyFilter: Filter = {
-      fromBlock: FROM_BLOCK,
-      toBlock: "latest",
+      fromBlock: Config.eventsFromBlock,
+      toBlock: Config.eventsToBlock,
       address: Config.contractAddress,
       topics: [ethers.id("Buy(address,uint256,uint256)")],
     };

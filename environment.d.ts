@@ -20,6 +20,8 @@ declare global {
       DB_USER: string;
       DB_PASSWORD: string;
       DROP_TABLES: string;
+      EVENTS_FROM_BLOCK: string;
+      EVENTS_TO_BLOCK: string;
     }
   }
 }
